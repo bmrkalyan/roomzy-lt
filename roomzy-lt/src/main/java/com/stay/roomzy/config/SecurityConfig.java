@@ -20,23 +20,14 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    public UserDetailsService userDetailsService;
-
-
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider daoAuthenticationProvider=new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
-        return  daoAuthenticationProvider;
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf(customizer -> customizer.disable())
-                .authorizeHttpRequests(req -> req.anyRequest().authenticated())
-                .httpBasic(Customizer.withDefaults()).build();
+        http.authorizeHttpRequests(auth->auth.anyRequest().authenticated())
+                .oauth2Login(Customizer.withDefaults());
+
+        return http.build();
 
     }
+
+
 }
